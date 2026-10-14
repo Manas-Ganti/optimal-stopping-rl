@@ -1,0 +1,52 @@
+{
+  "A": {
+    "passed": true,
+    "date": "2026-10-14",
+    "seed": 20261014,
+    "z_max": 3.5,
+    "n_paths": 100000,
+    "max_abs_z_gbm": 2.2441488957493627,
+    "max_abs_z_merton": 1.441193158835517,
+    "z_heston_martingale": 1.6023267312074891
+  },
+  "B": {
+    "passed": true,
+    "date": "2026-10-14",
+    "seed": 20261014,
+    "abs_tol": 0.04,
+    "mean_abs_tol": 0.02,
+    "mean_abs_err": 0.005683359927184195,
+    "max_abs_err": 0.02820456514557801,
+    "max_abs_err_vs_lattice": 0.026423841986436436
+  },
+  "C": {
+    "passed": true,
+    "date": "2026-10-14",
+    "seed": 20261014,
+    "early_exercise_rate": 0.0,
+    "max_early_exercise_rate": 0.005,
+    "value": 4.411294398308139,
+    "se": 0.01311743399285292,
+    "bs_call": 4.3958196610504,
+    "z": 1.1797076521346308,
+    "dates_with_any_exercise_on_grid": 0
+  },
+  "D": {
+    "passed": true,
+    "date": "2026-10-14",
+    "seed": 20261014,
+    "boundary": {
+      "n_dates": 50,
+      "n_missing": 0,
+      "mean_abs": 0.01499999999999999,
+      "max_abs": 0.02399999999999991,
+      "mean_signed": 0.01499999999999999
+    },
+    "rel_value_diff": 0.0001205271217921042,
+    "thresholds": {
+      "mean_abs_boundary_tol": 0.02,
+      "max_abs_boundary_tol": 0.05,
+      "rel_value_tol": 0.01
+    }
+  }
+}

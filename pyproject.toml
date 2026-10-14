@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "optstop"
+version = "0.1.0"
+description = "Learned optimal stopping for American options, verified against known answers."
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "matplotlib",
+    "gymnasium",
+    "scikit-learn",
+    "pydantic>=2",
+    "pyyaml",
+    "yfinance",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+optstop = "optstop.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,94 @@
+# Every number the code uses lives here. Gate thresholds mirror GATES.md.
+seed: 20261014
+
+# The training-distribution contract: an American put, Longstaff-Schwartz (2001) units.
+contract:
+  kind: put            # put | call
+  strike: 40.0
+  expiry: 1.0          # years
+  steps: 50            # exercise dates (k = 0..steps; k = steps is expiry)
+  rate: 0.06           # continuously compounded risk-free rate
+
+market:
+  spot: 40.0
+  vol: 0.2
+
+# Fitting/training paths for the boundary experiment (Gates C, D, headline figure) start from
+# dispersed spots so the boundary region is visited at every date. See GATES.md changes log.
+boundary_training:
+  spot_low: 0.70     # S0/K lower bound
+  spot_high: 1.30
+
+lsm:
+  basis: laguerre      # laguerre | polynomial
+  degree: 3
+  n_paths: 100000      # fit set (antithetic pairs => n_paths/2 independent draws)
+
+fitted_q:
+  regressor: rbf       # rbf (linear FQI on Gaussian RBF features) | extra_trees
+  n_paths: 20000
+  n_iterations: null   # null => steps (exact backward-induction depth for a finite horizon)
+  rbf_centers_x: 24    # centres in log-moneyness
+  rbf_centers_tau: 12  # centres in sqrt(time to expiry)
+  rbf_width: 1.0       # kernel width, in units of centre spacing
+  ridge: 1.0e-6
+  rbf_normalized: true   # partition-of-unity RBFs (Gate C attempt 4, pre-registered)
+  control_variate: true  # martingale control variates in the regression (added after Gate C
+  cv_centers_x: 8        # failed without them; see GATES.md changes log)
+  extra_trees:
+    n_estimators: 50
+    min_samples_leaf: 50
+
+evaluation:
+  n_paths: 200000
+  ci_level: 0.95
+
+boundary:
+  x_grid_min: 0.40
+  x_grid_max: 1.60
+  x_grid_points: 1201
+
+gates:
+  a:
+    n_paths: 100000
+    z_max: 3.5
+    merton_cases:
+      - {spot: 40.0, vol: 0.2, expiry: 1.0, intensity: 1.0, jump_mean: -0.10, jump_std: 0.10}
+      - {spot: 36.0, vol: 0.3, expiry: 0.5, intensity: 0.5, jump_mean: -0.20, jump_std: 0.15}
+      - {spot: 44.0, vol: 0.15, expiry: 2.0, intensity: 2.0, jump_mean: 0.05, jump_std: 0.05}
+  b:
+    abs_tol: 0.04
+    mean_abs_tol: 0.02
+  c:
+    max_early_exercise_rate: 0.005
+    z_max: 3.0
+    n_paths: 100000
+  d:
+    mean_abs_boundary_tol: 0.02
+    max_abs_boundary_tol: 0.05
+    rel_value_tol: 0.01
+
+# Evaluation-only dynamics. Never used for training in the main experiment.
+# Total annualised variance is matched to the GBM training vol so the comparison isolates
+# the *shape* of the distribution (jumps, stochastic vol), not its scale.
+misspecification:
+  n_paths: 200000
+  merton:
+    intensity: 1.0       # jumps per year
+    jump_mean: -0.10     # mean log jump
+    jump_std: 0.15
+  heston:
+    kappa: 2.0
+    theta_scale: 1.0     # long-run variance = theta_scale * vol^2
+    xi: 0.5
+    rho: -0.7
+
+real:
+  tickers: [SPY, QQQ, IWM, AAPL, MSFT, JPM, XOM, KO, JNJ, WMT, PG, IBM, INTC, GE, CAT, PFE]
+  start: "2000-01-01"
+  end: "2025-12-31"
+  rate: 0.03                   # flat rate for discounting on real paths
+  trading_days_per_year: 252
+  calibration_days: 252        # trailing window, strictly before each option's start date
+  vol_grid: [0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.50, 0.60]
+  cache_dir: data_cache
